@@ -49,6 +49,7 @@ public class NumberGuesserHW {
 	private void processCommands(String message) {
 		if (message.equalsIgnoreCase("quit")) {
 			System.out.println("Tired of playing? No problem, see you next time.");
+			saveLevel(); //Saves the level before quitting to resume progress later
 			isRunning = false;
 		}
 	}
@@ -91,6 +92,8 @@ public class NumberGuesserHW {
 	private void saveLevel() {
 		try (FileWriter fw = new FileWriter(saveFile)) {
 			fw.write("" + level);// here we need to convert it to a String to record correctly
+			fw.write(" " + strikes); //Save the number of strikes as a string with a space
+			fw.write(" " + number); //Save the correct number as a string with a space
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -103,10 +106,16 @@ public class NumberGuesserHW {
 			return false;
 		}
 		try (Scanner reader = new Scanner(file)) {
-			while (reader.hasNextLine()) {
+			while (reader.hasNextLine()) { 
+				//added _strikes and _number to be read from file
 				int _level = reader.nextInt();
+				int _strikes = reader.nextInt();
+				int _number = reader.nextInt();
 				if (_level > 1) {
+					//sets strikes and numbers from the file in addition to level
 					level = _level;
+					strikes = _strikes;
+					number = _number;					
 					break;
 				}
 			}
@@ -126,9 +135,13 @@ public class NumberGuesserHW {
 			System.out.println("I'll ask you to guess a number between a range, and you'll have " + maxStrikes
 					+ " attempts to guess.");
 			if (loadLevel()) {
-				System.out.println("Successfully loaded level " + level + " let's continue then");
+				System.out.println("Successfully loaded level " + level + " with " + strikes +" strikes out of 5. let's continue then");
+				//changed load message to include strikes
 			}
-			number = getNumber(level);
+			if(strikes == 0) {
+				number = getNumber(level);
+			}
+			//Generates new number if no guesses were taken
 			isRunning = true;
 			while (input.hasNext()) {
 				String message = input.nextLine();
