@@ -11,6 +11,7 @@ public class NumberGuesserHW {
 	private int maxStrikes = 5;
 	private int number = 0;
 	private boolean isRunning = false;
+	private boolean isReset = false; //bypasses processGuess
 	final String saveFile = "numberGuesserSave.txt";
 
 	/***
@@ -51,6 +52,13 @@ public class NumberGuesserHW {
 			System.out.println("Tired of playing? No problem, see you next time.");
 			saveLevel(); //Saves the level before quitting to resume progress later
 			isRunning = false;
+		}
+		if (message.equalsIgnoreCase("reset")) {
+			//resets the strikes and generates a new number appropriate for the level, and allows a bypass of processGuess in the run
+			System.out.println("Resetting level " + level + "...");
+			strikes = 0;
+			number = getNumber(level);
+			isReset = true;
 		}
 	}
 
@@ -149,6 +157,11 @@ public class NumberGuesserHW {
 				if (!isRunning) {
 					break;
 				}
+				else if (isReset) {
+					isReset = false;
+					continue;
+				}
+				//prevents processGuess from running when it doesn't need to
 				int guess = getGuess(message);
 				processGuess(guess);
 			}
