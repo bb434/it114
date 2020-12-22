@@ -3,7 +3,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import utils.Debug;
-//part 4
+//part 4 
 public class Room {
 	private SocketServer server;// used to refer to accessible server functions
 	private String name;
