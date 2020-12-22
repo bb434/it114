@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import utils.Debug;
-//Part 4
+//Part 4 
 public class SocketClient {
 	private Socket server;
 	private Thread inputThread;
