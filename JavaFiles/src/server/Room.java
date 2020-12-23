@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Random;
 
 public class Room implements AutoCloseable {
     private static SocketServer server;// used to refer to accessible server functions
@@ -14,6 +15,8 @@ public class Room implements AutoCloseable {
     private final static String COMMAND_TRIGGER = "/";
     private final static String CREATE_ROOM = "createroom";
     private final static String JOIN_ROOM = "joinroom";
+    private final static String ROLL = "roll";
+    private final static String FLIP = "flip";
 
     public Room(String name) {
 	this.name = name;
@@ -108,6 +111,40 @@ public class Room implements AutoCloseable {
 		    joinRoom(roomName, client);
 		    wasCommand = true;
 		    break;
+		case ROLL:
+			int dieSize = Integer.parseInt(comm2[1].substring(1));
+			Random r = new Random();
+			int result = r.nextInt(dieSize);
+			Iterator<ServerThread> iter = clients.iterator();
+			while (iter.hasNext()) {
+			    ServerThread recipient = iter.next();
+			    boolean messageSent = recipient.send("[SERVER]",client.getClientName() + " has rolled a "+result);
+			    if (!messageSent) {
+				iter.remove();
+				log.log(Level.INFO, "Removed client " + client.getId());
+			    }
+			}
+			wasCommand = true;
+			break;
+		case FLIP:
+			Random r2 = new Random();
+			int coin = r2.nextInt(2);
+			String result2;
+			if (coin == 0)
+				result2 = "heads";
+			else
+				result2 = "tails";
+			Iterator<ServerThread> iter2 = clients.iterator();
+			while (iter2.hasNext()) {
+			    ServerThread recipient2 = iter2.next();
+			    boolean messageSent = recipient2.send("[SERVER]",client.getClientName() + " got "+result2);
+			    if (!messageSent) {
+				iter2.remove();
+				log.log(Level.INFO, "Removed client " + client.getId());
+			    }
+			}
+			wasCommand = true;
+			break;
 		}
 	    }
 	}
