@@ -165,19 +165,43 @@ public class ClientUI extends JFrame implements Event {
 		entry.setEditable(false);
 		entry.setLayout(null);
 		entry.setText(str);
+		entry.setContentType("text/html");
 		Dimension d = new Dimension(textArea.getSize().width, calcHeightForText(str));
 		// attempt to lock all dimensions
 		entry.setMinimumSize(d);
 		entry.setPreferredSize(d);
 		entry.setMaximumSize(d);
 		textArea.add(entry);
+		
+		if(str.indexOf("**")>-1)
+			str = format(str, "b");
+		if (str.indexOf("*")>-1)
+			str = format(str, "i");
+		if (str.indexOf("_")>-1)
+			str = format(str, "u");
 
 		pack();
 		System.out.println(entry.getSize());
 		JScrollBar sb = ((JScrollPane) textArea.getParent().getParent()).getVerticalScrollBar();
 		sb.setValue(sb.getMaximum());
 	}
-
+	
+	String format(String str, String frmt) {
+		String[] s1 = str.split(frmt);
+        String m = "";
+        
+        for(int i = 0; i < s1.length; i++) {
+            if(i % 2 == 0) {
+                m += s1[i];
+            }
+            else {
+                m += "<"+ frmt +">" + s1[i] + "</"+ frmt +">";
+            }
+        }
+       
+        return m;		
+	}
+	
 	void next() {
 		card.next(this.getContentPane());
 	}
